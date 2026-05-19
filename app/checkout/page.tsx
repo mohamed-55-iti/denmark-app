@@ -12,7 +12,6 @@ import {
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
-// ─── Plan options ────────────────────────────────────────────────────────────
 const PLANS = [
   {
     id: 'basic',
@@ -33,43 +32,23 @@ const PLANS = [
   },
 ];
 
-// ─── Payment form (inner) ─────────────────────────────────────────────────────
+// ─── Payment form — clientSecret already loaded in Elements above ─────────────
 function CheckoutForm({ amount, planName }: { amount: number; planName: string }) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
+  const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
   const handleSubmit = async () => {
-    if (!stripe || !elements) return;
+    if (!stripe || !elements || !ready) return;
 
     setLoading(true);
     setError('');
 
-    const { error: submitError } = await elements.submit();
-    if (submitError) {
-      setError(submitError.message ?? 'Something went wrong.');
-      setLoading(false);
-      return;
-    }
-
-    const res = await fetch('/api/create-payment-intent', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount, currency: 'dkk' }),
-    });
-
-    const { clientSecret, error: apiError } = await res.json();
-    if (apiError) {
-      setError(apiError);
-      setLoading(false);
-      return;
-    }
-
     const { error: confirmError } = await stripe.confirmPayment({
       elements,
-      clientSecret,
       confirmParams: {
         return_url: `${window.location.origin}/checkout/success`,
       },
@@ -105,7 +84,7 @@ function CheckoutForm({ amount, planName }: { amount: number; planName: string }
 
   return (
     <div className="space-y-6">
-      <PaymentElement />
+      <PaymentElement onReady={() => setReady(true)} />
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 text-[14px] px-4 py-3 rounded-lg">
@@ -115,10 +94,10 @@ function CheckoutForm({ amount, planName }: { amount: number; planName: string }
 
       <button
         onClick={handleSubmit}
-        disabled={!stripe || loading}
+        disabled={!stripe || !ready || loading}
         className="w-full bg-black text-white text-[12px] font-bold uppercase tracking-widest py-3 rounded-lg hover:opacity-90 active:scale-[0.98] transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {loading ? 'Processing…' : `Pay ${amount} DKK`}
+        {!ready ? 'Loading…' : loading ? 'Processing…' : `Pay ${amount} DKK`}
       </button>
 
       <p className="text-center text-[12px] text-[#76777d]">
@@ -130,11 +109,10 @@ function CheckoutForm({ amount, planName }: { amount: number; planName: string }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function CheckoutPage() {
-  const [selectedPlan, setSelectedPlan] = useState(PLANS[1]); // default: Featured
+  const [selectedPlan, setSelectedPlan] = useState(PLANS[1]);
   const [clientSecret, setClientSecret] = useState('');
   const [loadingSecret, setLoadingSecret] = useState(false);
 
-  // Fetch a payment intent whenever the plan changes
   useEffect(() => {
     setLoadingSecret(true);
     setClientSecret('');
@@ -143,7 +121,7 @@ export default function CheckoutPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ amount: selectedPlan.price, currency: 'dkk' }),
     })
-      .then((r) => r.json())
+      .then(r => r.json())
       .then(({ clientSecret }) => {
         setClientSecret(clientSecret);
         setLoadingSecret(false);
@@ -155,7 +133,6 @@ export default function CheckoutPage() {
     <main className="min-h-screen bg-[#f6f3f5] py-16 px-4" style={{ fontFamily: 'Inter, sans-serif' }}>
       <div className="max-w-[900px] mx-auto space-y-10">
 
-        {/* Header */}
         <div className="text-center space-y-2">
           <Link href="/" className="text-black font-black text-[24px]" style={{ fontFamily: 'Manrope, sans-serif' }}>
             erhvervsmarked

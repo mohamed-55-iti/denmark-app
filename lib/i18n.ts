@@ -5,6 +5,8 @@ export const translations: Record<Language, Record<string, string>> = {
   en: {
     nav_browse: 'Browse', nav_equipment: 'Equipment', nav_valuation: 'Valuation',
     nav_about: 'About', nav_login: 'Login', nav_post_ad: 'Post an Ad',
+    nav_home: "Home",
+    nav_dashboard: "Dashboard",
     hero_badge: "Denmark's Premier Business Marketplace",
     hero_title: 'Acquire or Exit a Business with Full Transparency',
     hero_subtitle: 'Browse verified listings across Scandinavia. Connect directly with founders, review financials, and close deals — no brokers, no hidden fees.',

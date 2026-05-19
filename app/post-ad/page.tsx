@@ -1,12 +1,28 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const steps = ["Details", "Financials", "Media", "Preview"];
 
 export default function PostAdPage() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [maskName, setMaskName] = useState(false);
+  const [photos, setPhotos] = useState<File[]>([]);
+  const [docs, setDocs] = useState<File[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const photoRef = useRef<HTMLInputElement>(null);
+  const docRef = useRef<HTMLInputElement>(null);
+
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    await new Promise(r => setTimeout(r, 1500));
+    setSubmitting(false);
+    setSubmitted(true);
+    setTimeout(() => router.push('/checkout'), 1500);
+  };
 
   return (
     <main className="max-w-[1280px] mx-auto px-6 py-16 min-h-screen">
@@ -78,7 +94,6 @@ export default function PostAdPage() {
                   />
                 </div>
               </div>
-              {/* Confidentiality Guard */}
               <div className="p-6 bg-[#f6f3f5] rounded-lg border border-dashed border-[#c6c6cd]">
                 <div className="flex items-start gap-6">
                   <div className="p-3 bg-[#dce0e4] text-[#5e6367] rounded-full">
@@ -135,20 +150,70 @@ export default function PostAdPage() {
 
           {currentStep === 3 && (
             <div className="space-y-8">
-              <div className="border-2 border-dashed border-[#c6c6cd] rounded-xl p-12 text-center hover:border-black transition-colors cursor-pointer">
-                <span className="material-symbols-outlined text-[48px] text-[#45464d]">cloud_upload</span>
-                <p className="text-[16px] font-bold mt-4">Drag & drop photos here</p>
-                <p className="text-[14px] text-[#45464d] mt-1">or click to browse — PNG, JPG up to 10MB each</p>
-                <button className="mt-6 bg-black text-white px-8 py-2 rounded-lg text-[12px] font-semibold uppercase tracking-widest">
-                  Browse Files
-                </button>
+              {/* Photos upload */}
+              <div>
+                <input
+                  ref={photoRef}
+                  type="file"
+                  accept="image/png,image/jpeg"
+                  multiple
+                  className="hidden"
+                  onChange={e => setPhotos(Array.from(e.target.files ?? []))}
+                />
+                <div
+                  onClick={() => photoRef.current?.click()}
+                  className="border-2 border-dashed border-[#c6c6cd] rounded-xl p-12 text-center hover:border-black transition-colors cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[48px] text-[#45464d]">cloud_upload</span>
+                  <p className="text-[16px] font-bold mt-4">Drag & drop photos here</p>
+                  <p className="text-[14px] text-[#45464d] mt-1">or click to browse — PNG, JPG up to 10MB each</p>
+                  <button
+                    onClick={e => { e.stopPropagation(); photoRef.current?.click(); }}
+                    className="mt-6 bg-black text-white px-8 py-2 rounded-lg text-[12px] font-semibold uppercase tracking-widest"
+                  >
+                    Browse Files
+                  </button>
+                </div>
+                {photos.length > 0 && (
+                  <ul className="mt-3 space-y-1">
+                    {photos.map(f => (
+                      <li key={f.name} className="text-[13px] text-[#45464d] flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[16px] text-emerald-500">check_circle</span>
+                        {f.name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
+
+              {/* Documents upload */}
               <div className="space-y-1">
                 <label className="text-[12px] font-semibold uppercase tracking-widest text-[#45464d] block">Upload Financial Documents (Optional)</label>
-                <div className="border-2 border-dashed border-[#c6c6cd] rounded-xl p-6 text-center hover:border-black transition-colors cursor-pointer">
+                <input
+                  ref={docRef}
+                  type="file"
+                  accept="application/pdf"
+                  multiple
+                  className="hidden"
+                  onChange={e => setDocs(Array.from(e.target.files ?? []))}
+                />
+                <div
+                  onClick={() => docRef.current?.click()}
+                  className="border-2 border-dashed border-[#c6c6cd] rounded-xl p-6 text-center hover:border-black transition-colors cursor-pointer"
+                >
                   <span className="material-symbols-outlined text-[32px] text-[#45464d]">description</span>
                   <p className="text-[14px] text-[#45464d] mt-2">P&L statements, balance sheets, tax returns (PDF)</p>
                 </div>
+                {docs.length > 0 && (
+                  <ul className="mt-3 space-y-1">
+                    {docs.map(f => (
+                      <li key={f.name} className="text-[13px] text-[#45464d] flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[16px] text-emerald-500">check_circle</span>
+                        {f.name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
           )}
@@ -170,10 +235,27 @@ export default function PostAdPage() {
                     </div>
                   ))}
                 </div>
+                {photos.length > 0 && (
+                  <div>
+                    <span className="text-[#45464d] uppercase text-[11px] font-semibold tracking-widest block mb-1">Photos</span>
+                    <span className="font-bold">{photos.length} file(s) attached</span>
+                  </div>
+                )}
+                {docs.length > 0 && (
+                  <div>
+                    <span className="text-[#45464d] uppercase text-[11px] font-semibold tracking-widest block mb-1">Documents</span>
+                    <span className="font-bold">{docs.length} file(s) attached</span>
+                  </div>
+                )}
               </div>
               <div className="bg-[#dce0e4] rounded-xl p-6">
-                <p className="text-[14px] text-[#45464d]">By submitting, you agree to our <a href="#" className="text-black font-bold underline">Terms of Service</a> and confirm all information is accurate.</p>
+                <p className="text-[14px] text-[#45464d]">By submitting, you agree to our <Link href="/terms" className="text-black font-bold underline">Terms of Service</Link> and confirm all information is accurate.</p>
               </div>
+              {submitted && (
+                <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-[14px] px-4 py-3 rounded-lg text-center">
+                  ✓ Listing submitted! Redirecting to checkout…
+                </div>
+              )}
             </div>
           )}
 
@@ -186,12 +268,22 @@ export default function PostAdPage() {
               <span className="material-symbols-outlined">arrow_back</span>
               {currentStep === 1 ? "Cancel" : "Back"}
             </button>
-            <button
-              onClick={() => setCurrentStep(s => Math.min(steps.length, s + 1))}
-              className="bg-black text-white px-16 py-3 rounded-lg font-bold text-[12px] uppercase tracking-widest shadow-sm hover:shadow-md transition-all active:scale-95"
-            >
-              {currentStep === steps.length ? "Submit Listing" : "Next Step"}
-            </button>
+            {currentStep === steps.length ? (
+              <button
+                onClick={handleSubmit}
+                disabled={submitting || submitted}
+                className="bg-black text-white px-16 py-3 rounded-lg font-bold text-[12px] uppercase tracking-widest shadow-sm hover:shadow-md transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {submitting ? 'Submitting…' : submitted ? 'Submitted ✓' : 'Submit Listing'}
+              </button>
+            ) : (
+              <button
+                onClick={() => setCurrentStep(s => Math.min(steps.length, s + 1))}
+                className="bg-black text-white px-16 py-3 rounded-lg font-bold text-[12px] uppercase tracking-widest shadow-sm hover:shadow-md transition-all active:scale-95"
+              >
+                Next Step
+              </button>
+            )}
           </div>
         </div>
 
@@ -218,7 +310,7 @@ export default function PostAdPage() {
             <span className="text-[12px] font-semibold uppercase tracking-widest opacity-70">Need Help?</span>
             <p className="text-[16px] font-bold mt-2">Talk to an M&A Advisor</p>
             <p className="text-[14px] mt-2">Our team can help you prepare your financial data for the next step.</p>
-            <button className="mt-4 w-full py-2 bg-white text-[#5a5f62] font-bold text-[12px] uppercase tracking-widest rounded-lg">
+            <button onClick={() => window.location.href = '/contact'} className="mt-4 w-full py-2 bg-white text-[#5a5f62] font-bold text-[12px] uppercase tracking-widest rounded-lg">
               Contact Support
             </button>
           </div>

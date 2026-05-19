@@ -30,10 +30,12 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
+    { href: "/",          labelKey: "nav_home"      as const },
     { href: "/browse",    labelKey: "nav_browse"    as const },
     { href: "/equipment", labelKey: "nav_equipment" as const },
     { href: "/valuation", labelKey: "nav_valuation" as const },
     { href: "/about",     labelKey: "nav_about"     as const },
+    { href: "/admin",     labelKey: "nav_dashboard" as const },
   ];
 
   const currentLang = LANGUAGES.find((l) => l.code === language);
