@@ -158,7 +158,7 @@ export default function CheckoutPage() {
         {/* Header */}
         <div className="text-center space-y-2">
           <Link href="/" className="text-black font-black text-[24px]" style={{ fontFamily: 'Manrope, sans-serif' }}>
-            NordicMarket
+            erhvervsmarked
           </Link>
           <h1 className="text-[32px] font-bold text-black" style={{ fontFamily: 'Manrope, sans-serif' }}>
             Choose your listing plan

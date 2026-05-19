@@ -1,14 +1,18 @@
+"use client";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useLanguage } from "@/contexts/LanguageContext";
+import type { TranslationKey } from "@/lib/i18n";
 
-const categories = [
-  { icon: "restaurant", label: "F&B" },
-  { icon: "precision_manufacturing", label: "Manufacturing" },
-  { icon: "laptop_mac", label: "SaaS" },
-  { icon: "local_shipping", label: "Logistics" },
-  { icon: "health_and_safety", label: "Healthcare" },
-  { icon: "storefront", label: "Retail" },
+// labelKey typed as string — cast to TranslationKey at call sites
+const categories: { icon: string; labelKey: string }[] = [
+  { icon: "restaurant",              labelKey: "cat_fb"            },
+  { icon: "precision_manufacturing", labelKey: "cat_manufacturing" },
+  { icon: "laptop_mac",              labelKey: "cat_saas"          },
+  { icon: "local_shipping",          labelKey: "cat_logistics"     },
+  { icon: "health_and_safety",       labelKey: "cat_healthcare"    },
+  { icon: "storefront",              labelKey: "cat_retail"        },
 ];
 
 const featuredListings = [
@@ -51,6 +55,14 @@ const featuredListings = [
 ];
 
 export default function HomePage() {
+  const { tr } = useLanguage();
+
+  const steps = [
+    { n: "1", titleKey: "step1_title" as const, descKey: "step1_desc" as const },
+    { n: "2", titleKey: "step2_title" as const, descKey: "step2_desc" as const },
+    { n: "3", titleKey: "step3_title" as const, descKey: "step3_desc" as const },
+  ];
+
   return (
     <>
       <Navbar />
@@ -59,33 +71,39 @@ export default function HomePage() {
       <section className="bg-surface py-xl px-gutter">
         <div className="max-w-container-max mx-auto text-center space-y-md">
           <span className="inline-block bg-secondary-container text-on-secondary-container text-label-caps font-label-caps px-md py-xs rounded-full">
-            Denmark&apos;s Premier Business Marketplace
+            {tr("hero_badge")}
           </span>
           <h1 className="text-headline-lg font-headline-lg font-manrope max-w-3xl mx-auto leading-tight">
-            Acquire or Exit a Business with Full Transparency
+            {tr("hero_title")}
           </h1>
           <p className="text-on-surface-variant text-body-md max-w-xl mx-auto">
-            Browse verified listings across Scandinavia. Connect directly with founders, review financials, and close deals — no brokers, no hidden fees.
+            {tr("hero_subtitle")}
           </p>
           <div className="flex flex-col sm:flex-row gap-md justify-center pt-md">
             <Link
               href="/browse"
               className="bg-primary text-on-primary px-xl py-sm rounded-lg font-label-caps font-bold text-label-caps hover:opacity-90 active:scale-95 transition-all shadow-md"
             >
-              Browse Businesses
+              {tr("hero_browse")}
             </Link>
             <Link
               href="/post-ad"
               className="border-2 border-primary text-primary px-xl py-sm rounded-lg font-label-caps font-bold text-label-caps hover:bg-primary hover:text-on-primary transition-all"
             >
-              List Your Business
+              {tr("hero_list")}
             </Link>
           </div>
           <div className="flex justify-center gap-xl pt-lg flex-wrap">
-            {["15,000+ Investors", "1,200 Verified Listings", "Avg. 42 Days to Close"].map((s) => (
-              <div key={s} className="text-center">
-                <span className="block text-headline-md font-headline-md font-manrope">{s.split(" ")[0]}</span>
-                <span className="text-body-sm text-on-surface-variant">{s.split(" ").slice(1).join(" ")}</span>
+            {(
+              [
+                { val: tr("hero_stat1"), label: tr("hero_stat1_label") },
+                { val: tr("hero_stat2"), label: tr("hero_stat2_label") },
+                { val: tr("hero_stat3"), label: tr("hero_stat3_label") },
+              ] as const
+            ).map((s) => (
+              <div key={s.label} className="text-center">
+                <span className="block text-headline-md font-headline-md font-manrope">{s.val}</span>
+                <span className="text-body-sm text-on-surface-variant">{s.label}</span>
               </div>
             ))}
           </div>
@@ -98,14 +116,14 @@ export default function HomePage() {
           <div className="flex gap-md justify-center flex-wrap">
             {categories.map((c) => (
               <Link
-                key={c.label}
-                href={`/browse?category=${c.label}`}
+                key={c.labelKey}
+                href={`/browse?category=${tr(c.labelKey as TranslationKey)}`}
                 className="group flex flex-col items-center gap-xs p-md min-w-[100px] rounded-xl hover:bg-surface-container transition-all cursor-pointer"
               >
                 <div className="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                   <span className="material-symbols-outlined">{c.icon}</span>
                 </div>
-                <span className="text-label-caps font-label-caps">{c.label}</span>
+                <span className="text-label-caps font-label-caps">{tr(c.labelKey as TranslationKey)}</span>
               </Link>
             ))}
           </div>
@@ -117,11 +135,11 @@ export default function HomePage() {
         <div className="max-w-container-max mx-auto px-gutter">
           <div className="flex justify-between items-end mb-xl">
             <div>
-              <h2 className="text-headline-lg font-headline-lg font-manrope mb-xs">Featured Opportunities</h2>
-              <p className="text-on-surface-variant text-body-md">Hand-picked premium listings from verified sellers.</p>
+              <h2 className="text-headline-lg font-headline-lg font-manrope mb-xs">{tr("featured_title")}</h2>
+              <p className="text-on-surface-variant text-body-md">{tr("featured_subtitle")}</p>
             </div>
             <Link href="/browse" className="text-primary font-bold flex items-center gap-xs hover:gap-sm transition-all text-label-caps font-label-caps">
-              View All <span className="material-symbols-outlined">arrow_forward</span>
+              {tr("featured_view_all")} <span className="material-symbols-outlined">arrow_forward</span>
             </Link>
           </div>
 
@@ -158,7 +176,7 @@ export default function HomePage() {
                     href={`/listings/${listing.id}`}
                     className="block w-full border-2 border-primary text-primary text-center py-xs rounded-lg font-label-caps text-label-caps hover:bg-primary hover:text-on-primary transition-all"
                   >
-                    View Details
+                    {tr("featured_view_details")}
                   </Link>
                 </div>
               </div>
@@ -171,21 +189,17 @@ export default function HomePage() {
       <section className="py-xl bg-surface">
         <div className="max-w-container-max mx-auto px-gutter">
           <div className="text-center mb-xl">
-            <h2 className="text-headline-lg font-headline-lg font-manrope mb-xs">How NordicMarket Works</h2>
-            <p className="text-on-surface-variant max-w-xl mx-auto text-body-md">Three simple steps to secure your next business acquisition or exit.</p>
+            <h2 className="text-headline-lg font-headline-lg font-manrope mb-xs">{tr("how_title")}</h2>
+            <p className="text-on-surface-variant max-w-xl mx-auto text-body-md">{tr("how_subtitle")}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-xl">
-            {[
-              { n: "1", title: "Discover", desc: "Browse verified listings across Denmark with detailed financial data and asset lists." },
-              { n: "2", title: "Verify", desc: "Communicate directly with sellers through our secure portal and review audited documents." },
-              { n: "3", title: "Close", desc: "Use our NDA framework and legal templates to finalize your acquisition seamlessly." },
-            ].map((step) => (
+            {steps.map((step) => (
               <div key={step.n} className="flex flex-col items-center text-center">
                 <div className="w-16 h-16 bg-primary text-on-primary rounded-full flex items-center justify-center mb-md font-manrope text-headline-md font-bold shadow-lg">
                   {step.n}
                 </div>
-                <h3 className="text-headline-md font-headline-md font-manrope mb-xs">{step.title}</h3>
-                <p className="text-on-surface-variant text-body-sm">{step.desc}</p>
+                <h3 className="text-headline-md font-headline-md font-manrope mb-xs">{tr(step.titleKey)}</h3>
+                <p className="text-on-surface-variant text-body-sm">{tr(step.descKey)}</p>
               </div>
             ))}
           </div>
@@ -195,22 +209,20 @@ export default function HomePage() {
       {/* CTA */}
       <section className="py-xl bg-primary text-on-primary">
         <div className="max-w-container-max mx-auto px-gutter text-center space-y-md">
-          <h2 className="text-headline-lg font-headline-lg font-manrope">Ready to Find Your Next Acquisition?</h2>
-          <p className="text-on-primary/70 text-body-md max-w-lg mx-auto">
-            Join 15,000+ investors and founders already using NordicMarket.
-          </p>
+          <h2 className="text-headline-lg font-headline-lg font-manrope">{tr("cta_title")}</h2>
+          <p className="text-on-primary/70 text-body-md max-w-lg mx-auto">{tr("cta_subtitle")}</p>
           <div className="flex flex-col sm:flex-row gap-md justify-center pt-md">
             <Link
               href="/browse"
               className="bg-on-primary text-primary px-xl py-sm rounded-lg font-label-caps font-bold text-label-caps hover:opacity-90 transition-all shadow-md"
             >
-              Browse Listings
+              {tr("cta_browse")}
             </Link>
             <Link
               href="/post-ad"
               className="border-2 border-on-primary text-on-primary px-xl py-sm rounded-lg font-label-caps font-bold text-label-caps hover:bg-on-primary hover:text-primary transition-all"
             >
-              List Your Business
+              {tr("cta_list")}
             </Link>
           </div>
         </div>

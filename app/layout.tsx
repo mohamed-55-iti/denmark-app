@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope, Inter } from "next/font/google";
 import "./globals.css";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -15,7 +16,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "NordicMarket – Minimalist Business Exchange",
+  title: "erhvervsmarked – Minimalist Business Exchange",
   description: "Buy and sell businesses across Denmark and Northern Europe.",
 };
 
@@ -33,7 +34,9 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-background text-on-background font-inter antialiased">
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

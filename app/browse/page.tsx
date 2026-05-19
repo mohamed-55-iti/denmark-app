@@ -18,7 +18,7 @@ const listings = [
   },
   {
     id: "2",
-    title: "Nordic SaaS Platform",
+    title: "erhvervsmarked SaaS Platform",
     category: "Tech & SaaS",
     location: "Aarhus",
     price: "7.5M DKK",

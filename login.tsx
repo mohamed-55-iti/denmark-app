@@ -7,14 +7,14 @@ export default function LoginPage() {
       <section className="relative w-full md:w-1/2 lg:w-3/5 bg-primary overflow-hidden hidden md:flex flex-col justify-end p-xl">
         <div className="absolute inset-0 opacity-80">
           <img
-            alt="Nordic Workspace"
+            alt="erhvervsmarked Workspace"
             className="w-full h-full object-cover"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJu_PK7BTrKRmKJMHD8Ukmq0YVggM0ISv4reoYTUD29QLP-PcrymXNCylN9G0dF4YUxgdg1rMVOxUzIffLkX1ErMTv621iYfhphNPYj71MNZ-rFbcBHEnCdFc569igIa-s7I4Ekdq6x6WmODUqbOEZsJx7MHHXtdmKPx3wtCQuEFMMkvN5X6QyDGfnoYz54YTb1g2M_eOofSxpP2dRHgAv6-89QOjVTRa6v012m-9SrV1wl_3m-TQBm_r0WdYeONTQkw8MU7G70DI"
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
         <div className="relative z-10 space-y-md">
-          <span className="text-on-primary font-bold tracking-tighter text-headline-md font-manrope">NordicMarket</span>
+          <span className="text-on-primary font-bold tracking-tighter text-headline-md font-manrope">erhvervsmarked</span>
           <blockquote className="space-y-sm">
             <p className="text-on-primary text-[32px] font-manrope leading-tight font-semibold italic">
               &ldquo;Transparency is the cornerstone of every successful acquisition. We build the bridge between visionary founders and strategic investors.&rdquo;
@@ -29,7 +29,7 @@ export default function LoginPage() {
       {/* Right: Form */}
       <section className="w-full md:w-1/2 lg:w-2/5 flex flex-col p-gutter md:p-xl justify-center bg-surface-container-low">
         <div className="md:hidden mb-lg flex justify-center">
-          <span className="text-primary font-black text-headline-md font-manrope">NordicMarket</span>
+          <span className="text-primary font-black text-headline-md font-manrope">erhvervsmarked</span>
         </div>
         <div className="max-w-[400px] mx-auto w-full space-y-lg">
           <div className="space-y-xs">

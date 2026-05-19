@@ -131,7 +131,7 @@ function LoginForm() {
         <div className="absolute inset-0 opacity-80">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            alt="Nordic Workspace"
+            alt="erhvervsmarked Workspace"
             className="w-full h-full object-cover"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJu_PK7BTrKRmKJMHD8Ukmq0YVggM0ISv4reoYTUD29QLP-PcrymXNCylN9G0dF4YUxgdg1rMVOxUzIffLkX1ErMTv621iYfhphNPYj71MNZ-rFbcBHEnCdFc569igIa-s7I4Ekdq6x6WmODUqbOEZsJx7MHHXtdmKPx3wtCQuEFMMkvN5X6QyDGfnoYz54YTb1g2M_eOofSxpP2dRHgAv6-89QOjVTRa6v012m-9SrV1wl_3m-TQBm_r0WdYeONTQkw8MU7G70DI"
           />
@@ -139,7 +139,7 @@ function LoginForm() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
         <div className="relative z-10 space-y-6">
           <Link href="/" className="text-white font-bold text-[20px]" style={{ fontFamily: 'Manrope, sans-serif' }}>
-            NordicMarket
+            erhvervsmarked
           </Link>
           <blockquote className="space-y-4">
             <p className="text-white text-[32px] leading-tight font-semibold italic" style={{ fontFamily: 'Manrope, sans-serif' }}>
@@ -158,7 +158,7 @@ function LoginForm() {
         {/* Mobile logo */}
         <div className="md:hidden mb-10 flex justify-center">
           <Link href="/" className="text-black font-black text-[24px]" style={{ fontFamily: 'Manrope, sans-serif' }}>
-            NordicMarket
+            erhvervsmarked
           </Link>
         </div>
 
@@ -343,9 +343,9 @@ function LoginForm() {
 
           <p className="text-center text-[14px] text-[#5e6367]">
             By signing in, you agree to our{' '}
-            <a className="text-black font-semibold underline underline-offset-4" href="#">Terms</a>{' '}
+            <Link className="text-black font-semibold underline underline-offset-4" href="/terms">Terms</Link>{' '}
             and{' '}
-            <a className="text-black font-semibold underline underline-offset-4" href="#">Privacy Policy</a>.
+            <Link className="text-black font-semibold underline underline-offset-4" href="/privacy">Privacy Policy</Link>.
           </p>
           </>)}
         </div>

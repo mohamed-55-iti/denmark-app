@@ -1,107 +1,175 @@
+"use client";
 import Link from "next/link";
+import { useRef, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Language } from "@/lib/i18n";
+
+const LANGUAGES: { code: Language; label: string }[] = [
+  { code: "en", label: "English" },
+  { code: "da", label: "Dansk"   },
+  { code: "sv", label: "Svenska" },
+  { code: "no", label: "Norsk"   },
+  { code: "ar", label: "العربية" },
+];
 
 export default function Footer() {
-  return (
-    <footer className="bg-surface-dim border-t border-outline-variant py-xl">
-      <div className="max-w-[1280px] mx-auto px-gutter grid grid-cols-1 md:grid-cols-4 gap-lg">
-        {/* Brand */}
-        <div className="col-span-1">
-          <span className="text-[24px] font-bold text-on-surface font-manrope block mb-md">
-            NordicMarket
-          </span>
-          <p className="text-[14px] text-on-secondary-container mb-md leading-relaxed">
-            The premier business exchange platform for SMEs in Denmark and the
-            wider Nordic region.
-          </p>
-          <div className="flex gap-sm">
-            <span className="material-symbols-outlined text-secondary cursor-pointer hover:text-primary transition-colors">
-              public
-            </span>
-            <span className="material-symbols-outlined text-secondary cursor-pointer hover:text-primary transition-colors">
-              share
-            </span>
-          </div>
-        </div>
+  const { language, setLanguage, tr } = useLanguage();
+  const languageSectionRef = useRef<HTMLDivElement>(null);
+  const [copied, setCopied] = useState(false);
 
-        {/* Platform */}
-        <div>
-          <span className="text-[12px] tracking-widest font-semibold uppercase text-on-surface block mb-md">
-            Platform
-          </span>
-          <ul className="space-y-sm">
-            {["Browse Listings", "Success Stories", "Pricing", "Valuation Tool"].map(
-              (item) => (
-                <li key={item}>
+  const handleGlobeClick = () => {
+    languageSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
+  const handleShareClick = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      const input = document.createElement("input");
+      input.value = window.location.href;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand("copy");
+      document.body.removeChild(input);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  return (
+    <footer className="bg-surface-container-low border-t border-outline-variant">
+      <div className="max-w-container-max mx-auto px-gutter py-xl">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-xl">
+
+          {/* Brand */}
+          <div>
+            <p className="font-manrope font-bold text-body-lg mb-sm">erhvervsmarked</p>
+            <p className="font-inter text-body-sm text-secondary leading-relaxed">
+              {tr("footerDesc")}
+            </p>
+            <div className="flex gap-sm mt-md items-center">
+
+              {/* Globe → scroll to language section */}
+              <button
+                onClick={handleGlobeClick}
+                title="Choose language"
+                className="w-8 h-8 rounded-full border border-outline-variant flex items-center justify-center hover:border-primary hover:text-primary transition-all"
+              >
+                <span className="material-symbols-outlined text-[18px]">public</span>
+              </button>
+
+              {/* Share → copy link + "Copied!" tooltip */}
+              <div className="relative">
+                <button
+                  onClick={handleShareClick}
+                  title="Copy link"
+                  className="w-8 h-8 rounded-full border border-outline-variant flex items-center justify-center hover:border-primary hover:text-primary transition-all"
+                >
+                  <span className="material-symbols-outlined text-[18px]">
+                    {copied ? "check" : "share"}
+                  </span>
+                </button>
+                {copied && (
+                  <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-on-primary text-[11px] px-2 py-1 rounded whitespace-nowrap">
+                    Copied!
+                  </span>
+                )}
+              </div>
+
+            </div>
+          </div>
+
+          {/* Platform */}
+          <div>
+            <p className="font-inter font-semibold text-[11px] tracking-widest uppercase text-secondary mb-md">
+              Platform
+            </p>
+            <ul className="space-y-sm">
+              {[
+                { label: tr("nav_browse"),    href: "/browse"     },
+                { label: tr("nav_equipment"), href: "/equipment"  },
+                { label: tr("nav_valuation"), href: "/valuation"  },
+                { label: tr("nav_about"),     href: "/about"      },
+              ].map((link) => (
+                <li key={link.href}>
                   <Link
-                    href="#"
-                    className="text-on-secondary-container hover:text-primary transition-colors text-[14px]"
+                    href={link.href}
+                    className="font-inter text-body-sm text-secondary hover:text-primary transition-colors"
                   >
-                    {item}
+                    {link.label}
                   </Link>
                 </li>
-              )
-            )}
-          </ul>
+              ))}
+            </ul>
+          </div>
+
+          {/* Resources */}
+          <div>
+            <p className="font-inter font-semibold text-[11px] tracking-widest uppercase text-secondary mb-md">
+              {tr("resources")}
+            </p>
+            <ul className="space-y-sm">
+              {[
+                { label: tr("termsOfService"), href: "/terms" },
+                { label: tr("privacyPolicy"),  href: "/privacy"         },
+                { label: tr("contactSupport"), href: "/contact"         },
+              ].map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="font-inter text-body-sm text-secondary hover:text-primary transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Language — ref هنا عشان الـ Globe يعمل scroll ليه */}
+          <div ref={languageSectionRef}>
+            <p className="font-inter font-semibold text-[11px] tracking-widest uppercase text-secondary mb-md">
+              {tr("language")}
+            </p>
+            <ul className="space-y-sm">
+              {LANGUAGES.map((lang) => (
+                <li key={lang.code}>
+                  <button
+                    onClick={() => setLanguage(lang.code)}
+                    className={`font-inter text-body-sm transition-colors text-left ${
+                      language === lang.code
+                        ? "text-primary font-semibold underline underline-offset-2"
+                        : "text-secondary hover:text-primary"
+                    }`}
+                  >
+                    {lang.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
         </div>
 
-        {/* Resources */}
-        <div>
-          <span className="text-[12px] tracking-widest font-semibold uppercase text-on-surface block mb-md">
-            Resources
-          </span>
-          <ul className="space-y-sm">
-            {[
-              "Legal Templates",
-              "Due Diligence Guide",
-              "Contact Support",
-              "Privacy Policy",
-            ].map((item) => (
-              <li key={item}>
-                <Link
-                  href="#"
-                  className="text-on-secondary-container hover:text-primary transition-colors text-[14px]"
-                >
-                  {item}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Language */}
-        <div>
-          <span className="text-[12px] tracking-widest font-semibold uppercase text-on-surface block mb-md">
-            Language
-          </span>
-          <div className="flex flex-wrap gap-sm">
-            {[
-              { label: "English", active: true },
-              { label: "Dansk", active: false },
-              { label: "Svenska", active: false },
-              { label: "Norsk", active: false },
-            ].map((lang) => (
-              <Link
-                key={lang.label}
-                href="#"
-                className={`text-[14px] transition-colors ${
-                  lang.active
-                    ? "text-primary font-bold underline"
-                    : "text-on-secondary-container hover:text-primary"
-                }`}
-              >
-                {lang.label}
-              </Link>
-            ))}
+        {/* Bottom bar */}
+        <div className="border-t border-outline-variant mt-xl pt-lg flex flex-col sm:flex-row justify-between items-center gap-sm">
+          <p className="font-inter text-body-sm text-secondary text-center">
+            © 2025 erhvervsmarked. Minimalist Business Exchange.
+          </p>
+          <div className="flex gap-md">
+            <Link href="/privacy" className="font-inter text-[11px] text-secondary hover:text-primary transition-colors">
+              {tr("privacyPolicy")}
+            </Link>
+            <Link href="/terms" className="font-inter text-[11px] text-secondary hover:text-primary transition-colors">
+              {tr("termsOfService")}
+            </Link>
+            <Link href="/contact" className="font-inter text-[11px] text-secondary hover:text-primary transition-colors">
+              {tr("contactSupport")}
+            </Link>
           </div>
         </div>
-      </div>
-
-      {/* Copyright */}
-      <div className="max-w-[1280px] mx-auto px-gutter mt-xl pt-lg border-t border-outline-variant text-center">
-        <p className="text-[14px] text-secondary">
-          © 2024 NordicMarket. Minimalist Business Exchange. Securely operating
-          across Copenhagen, Aarhus, and Odense.
-        </p>
       </div>
     </footer>
   );

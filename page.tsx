@@ -64,7 +64,7 @@ export default function HomePage() {
             <img
               className="w-full h-full object-cover"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoS-wDejNKFaBiKSR3ZAyR1UDUTU7lCs4LZqlszPB5AzI9RPFuIt-nuIMZka8GRXesapA3Fv8m3QvcUobcIgrDResVklB6a-GmFf_a30L-OH-YsTOJrPLhmlR4xcAM2gzm6CYjxPBmYccmFhvTe1a7wqfvvCkGY8AQfhObGAFx27xyJ0LgzF4r0ROaQSRhR8HKtKPAaaMEMcN3XydWp76hgOUj77St_x7t801-oEfHsN9WEDUfjOoIY5AefBUseg6472nUo4bldpQ"
-              alt="Nordic workspace"
+              alt="erhvervsmarked.dk workspace"
             />
           </div>
           <div className="relative max-w-container-max mx-auto px-gutter text-center">
@@ -82,7 +82,7 @@ export default function HomePage() {
             </h1>
             <p className="text-body-lg font-inter text-secondary mb-xl max-w-2xl mx-auto">
               Securely buy and sell established companies, high-value equipment, and commercial assets
-              with Nordic transparency.
+              with erhvervsmarked transparency.
             </p>
             {/* Search */}
             <div className="max-w-3xl mx-auto bg-surface p-base rounded-xl shadow-lg flex flex-col md:flex-row items-center gap-base">
@@ -204,7 +204,7 @@ export default function HomePage() {
         <section className="py-[80px] bg-surface">
           <div className="max-w-container-max mx-auto px-gutter">
             <div className="text-center mb-xl">
-              <h2 className="text-headline-lg font-manrope font-semibold mb-base">How NordicMarket Works</h2>
+              <h2 className="text-headline-lg font-manrope font-semibold mb-base">How erhvervsmarked Works</h2>
               <p className="text-secondary font-inter max-w-xl mx-auto">
                 Three simple steps to secure your next business acquisition or exit.
               </p>
@@ -246,7 +246,7 @@ export default function HomePage() {
           <div className="max-w-container-max mx-auto px-gutter">
             <h2 className="text-headline-lg font-manrope font-semibold mb-md">Ready to Buy or Sell?</h2>
             <p className="text-secondary font-inter mb-xl max-w-xl mx-auto">
-              Join thousands of Nordic entrepreneurs who trust NordicMarket for their business transactions.
+              Join thousands of erhvervsmarked entrepreneurs who trust erhvervsmarked for their business transactions.
             </p>
             <div className="flex flex-col sm:flex-row gap-md justify-center">
               <Link

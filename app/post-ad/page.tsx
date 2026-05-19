@@ -54,7 +54,7 @@ export default function PostAdPage() {
                 <label className="text-[12px] font-semibold uppercase tracking-widest text-[#45464d] block">Business Name</label>
                 <input
                   type="text"
-                  placeholder="e.g. Nordic Peak Logistics"
+                  placeholder="e.g. erhvervsmarked Peak Logistics"
                   className="w-full h-12 px-6 bg-[#f6f3f5] border-2 border-[#eae7e9] rounded-lg focus:outline-none focus:border-black transition-colors text-[16px]"
                 />
               </div>
@@ -159,7 +159,7 @@ export default function PostAdPage() {
                 <h3 className="text-[20px] font-semibold">Listing Preview</h3>
                 <div className="grid grid-cols-2 gap-4 text-[14px]">
                   {[
-                    ["Business Name", "Nordic Peak Logistics"],
+                    ["Business Name", "erhvervsmarked Peak Logistics"],
                     ["Category", "SaaS / Digital"],
                     ["Location", "Copenhagen, Denmark"],
                     ["Asking Price", "$2,500,000"],
@@ -203,7 +203,7 @@ export default function PostAdPage() {
             </div>
             <div className="p-6">
               <h3 className="text-[24px] font-semibold text-black mb-2">Why post here?</h3>
-              <p className="text-[14px] text-[#45464d] mb-6">NordicMarket reaches over 15,000 verified investors looking for stable acquisitions in Northern Europe and the Middle East.</p>
+              <p className="text-[14px] text-[#45464d] mb-6">erhvervsmarked reaches over 15,000 verified investors looking for stable acquisitions in Northern Europe and the Middle East.</p>
               <ul className="space-y-3">
                 {["Verified Buyer Network", "Secure NDA Framework", "Valuations Support"].map(item => (
                   <li key={item} className="flex gap-3 items-center text-[14px] font-medium">
