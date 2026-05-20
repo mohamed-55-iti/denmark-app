@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -9,6 +12,7 @@ const listings = [
     category: "Cafe & Food",
     location: "Copenhagen",
     price: "4.2M DKK",
+    priceNum: 4.2,
     revenue: "1.8M DKK",
     ebitda: "420K DKK",
     industry: "Food & Beverage",
@@ -22,6 +26,7 @@ const listings = [
     category: "Tech & SaaS",
     location: "Aarhus",
     price: "7.5M DKK",
+    priceNum: 7.5,
     revenue: "3.2M DKK",
     ebitda: "1.1M DKK",
     industry: "Technology",
@@ -35,6 +40,7 @@ const listings = [
     category: "Logistics",
     location: "Aarhus",
     price: "3.2M DKK",
+    priceNum: 3.2,
     revenue: "2.1M DKK",
     ebitda: "380K DKK",
     industry: "Logistics",
@@ -48,6 +54,7 @@ const listings = [
     category: "Retail",
     location: "Odense",
     price: "5.8M DKK",
+    priceNum: 5.8,
     revenue: "4.5M DKK",
     ebitda: "690K DKK",
     industry: "Retail",
@@ -61,6 +68,7 @@ const listings = [
     category: "Services",
     location: "Copenhagen",
     price: "2.9M DKK",
+    priceNum: 2.9,
     revenue: "1.4M DKK",
     ebitda: "310K DKK",
     industry: "Services",
@@ -74,6 +82,7 @@ const listings = [
     category: "Retail",
     location: "Copenhagen",
     price: "6.1M DKK",
+    priceNum: 6.1,
     revenue: "5.2M DKK",
     ebitda: "880K DKK",
     industry: "Retail & E-commerce",
@@ -84,8 +93,68 @@ const listings = [
 ];
 
 const categories = ["All", "Cafe & Food", "Tech & SaaS", "Logistics", "Services", "Retail"];
+const locations = ["Copenhagen", "Aarhus", "Odense", "Aalborg"];
 
 export default function BrowsePage() {
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [maxPrice, setMaxPrice] = useState(10);
+  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState("newest");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const toggleLocation = (loc: string) => {
+    setSelectedLocations((prev) =>
+      prev.includes(loc) ? prev.filter((l) => l !== loc) : [...prev, loc]
+    );
+  };
+
+  const filtered = useMemo(() => {
+    let result = [...listings];
+
+    // Search
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (l) =>
+          l.title.toLowerCase().includes(q) ||
+          l.category.toLowerCase().includes(q) ||
+          l.location.toLowerCase().includes(q) ||
+          l.industry.toLowerCase().includes(q)
+      );
+    }
+
+    // Category
+    if (activeCategory !== "All") {
+      result = result.filter((l) => l.category === activeCategory);
+    }
+
+    // Price
+    result = result.filter((l) => l.priceNum <= maxPrice);
+
+    // Locations
+    if (selectedLocations.length > 0) {
+      result = result.filter((l) => selectedLocations.includes(l.location));
+    }
+
+    // Sort
+    switch (sortBy) {
+      case "price-asc":
+        result.sort((a, b) => a.priceNum - b.priceNum);
+        break;
+      case "price-desc":
+        result.sort((a, b) => b.priceNum - a.priceNum);
+        break;
+      case "revenue-desc":
+        result.sort((a, b) => parseFloat(b.revenue) - parseFloat(a.revenue));
+        break;
+      default:
+        // newest = original order (keep as-is)
+        break;
+    }
+
+    return result;
+  }, [activeCategory, maxPrice, selectedLocations, sortBy, searchQuery]);
+
   return (
     <div className="bg-background text-on-background min-h-screen">
       <Navbar />
@@ -98,7 +167,7 @@ export default function BrowsePage() {
               Browse Listings
             </h1>
             <p className="text-secondary text-[18px] mb-lg">
-              {listings.length} verified businesses available for acquisition
+              {filtered.length} verified{filtered.length !== listings.length ? " matching" : ""} businesses available for acquisition
             </p>
 
             {/* Search + Filter */}
@@ -109,13 +178,27 @@ export default function BrowsePage() {
                   className="w-full border-none outline-none bg-transparent py-sm text-[16px]"
                   placeholder="Search businesses, categories, locations…"
                   type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="material-symbols-outlined text-outline hover:text-on-surface transition-colors text-[20px]"
+                  >
+                    close
+                  </button>
+                )}
               </div>
-              <select className="bg-surface border-2 border-surface-container-high rounded-lg px-md py-sm text-[14px] text-secondary focus:outline-none focus:border-primary transition-colors">
-                <option>Sort: Newest First</option>
-                <option>Price: Low to High</option>
-                <option>Price: High to Low</option>
-                <option>Revenue: High to Low</option>
+              <select
+                className="bg-surface border-2 border-surface-container-high rounded-lg px-md py-sm text-[14px] text-secondary focus:outline-none focus:border-primary transition-colors"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="newest">Sort: Newest First</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="revenue-desc">Revenue: High to Low</option>
               </select>
             </div>
           </div>
@@ -124,6 +207,7 @@ export default function BrowsePage() {
         <div className="max-w-[1280px] mx-auto px-gutter py-xl flex flex-col lg:flex-row gap-xl">
           {/* Sidebar Filters */}
           <aside className="lg:w-64 shrink-0 space-y-lg">
+            {/* Category */}
             <div className="bg-surface border border-outline-variant rounded-xl p-md">
               <h3 className="text-[12px] tracking-widest font-semibold uppercase text-on-surface-variant mb-md">
                 Category
@@ -132,8 +216,9 @@ export default function BrowsePage() {
                 {categories.map((cat) => (
                   <li key={cat}>
                     <button
+                      onClick={() => setActiveCategory(cat)}
                       className={`w-full text-left px-sm py-xs rounded-lg text-[14px] transition-colors ${
-                        cat === "All"
+                        cat === activeCategory
                           ? "bg-primary text-on-primary font-semibold"
                           : "text-on-surface hover:bg-surface-container-low"
                       }`}
@@ -145,6 +230,7 @@ export default function BrowsePage() {
               </ul>
             </div>
 
+            {/* Price Range */}
             <div className="bg-surface border border-outline-variant rounded-xl p-md">
               <h3 className="text-[12px] tracking-widest font-semibold uppercase text-on-surface-variant mb-md">
                 Price Range
@@ -154,27 +240,44 @@ export default function BrowsePage() {
                   className="w-full h-1 bg-outline-variant rounded-full appearance-none accent-primary"
                   max="10"
                   min="0"
+                  step="0.5"
                   type="range"
-                  defaultValue="10"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(Number(e.target.value))}
                 />
                 <div className="flex justify-between text-[12px] text-secondary">
                   <span>0 DKK</span>
-                  <span>10M+ DKK</span>
+                  <span className="text-primary font-semibold">
+                    {maxPrice >= 10 ? "10M+ DKK" : `${maxPrice}M DKK`}
+                  </span>
                 </div>
               </div>
             </div>
 
+            {/* Location */}
             <div className="bg-surface border border-outline-variant rounded-xl p-md">
-              <h3 className="text-[12px] tracking-widest font-semibold uppercase text-on-surface-variant mb-md">
-                Location
-              </h3>
+              <div className="flex items-center justify-between mb-md">
+                <h3 className="text-[12px] tracking-widest font-semibold uppercase text-on-surface-variant">
+                  Location
+                </h3>
+                {selectedLocations.length > 0 && (
+                  <button
+                    onClick={() => setSelectedLocations([])}
+                    className="text-[11px] text-primary hover:underline"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
               <ul className="space-y-xs">
-                {["Copenhagen", "Aarhus", "Odense", "Aalborg"].map((loc) => (
+                {locations.map((loc) => (
                   <li key={loc} className="flex items-center gap-xs">
                     <input
                       type="checkbox"
                       id={loc}
-                      className="rounded border-outline text-primary w-4 h-4"
+                      checked={selectedLocations.includes(loc)}
+                      onChange={() => toggleLocation(loc)}
+                      className="rounded border-outline text-primary w-4 h-4 cursor-pointer"
                     />
                     <label htmlFor={loc} className="text-[14px] text-on-surface cursor-pointer">
                       {loc}
@@ -183,70 +286,94 @@ export default function BrowsePage() {
                 ))}
               </ul>
             </div>
+
+            {/* Reset All */}
+            {(activeCategory !== "All" || maxPrice < 10 || selectedLocations.length > 0 || searchQuery) && (
+              <button
+                onClick={() => {
+                  setActiveCategory("All");
+                  setMaxPrice(10);
+                  setSelectedLocations([]);
+                  setSearchQuery("");
+                  setSortBy("newest");
+                }}
+                className="w-full border-2 border-outline-variant text-secondary py-xs rounded-lg text-[12px] tracking-widest font-semibold uppercase text-center hover:border-primary hover:text-primary transition-all"
+              >
+                Reset All Filters
+              </button>
+            )}
           </aside>
 
           {/* Listings Grid */}
           <div className="flex-1">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-lg">
-              {listings.map((listing) => (
-                <div
-                  key={listing.id}
-                  className="bg-surface rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all group border border-outline-variant"
-                >
-                  <div className="h-44 relative overflow-hidden">
-                    <img
-                      alt={listing.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      src={listing.image}
-                    />
-                    {listing.badge && (
-                      <span
-                        className={`absolute top-sm left-sm text-[10px] tracking-widest font-bold uppercase px-xs py-[2px] rounded-full ${
-                          listing.badge === "Featured"
-                            ? "bg-tertiary-fixed text-on-tertiary-fixed"
-                            : listing.badge === "New"
-                            ? "bg-primary text-on-primary"
-                            : "bg-secondary-container text-on-surface"
-                        }`}
+            {filtered.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-2xl text-center">
+                <span className="material-symbols-outlined text-[64px] text-outline mb-md">search_off</span>
+                <h3 className="text-[20px] font-bold font-manrope mb-xs">No listings found</h3>
+                <p className="text-secondary text-[14px]">Try adjusting your filters or search query.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-lg">
+                {filtered.map((listing) => (
+                  <div
+                    key={listing.id}
+                    className="bg-surface rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all group border border-outline-variant"
+                  >
+                    <div className="h-44 relative overflow-hidden">
+                      <img
+                        alt={listing.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        src={listing.image}
+                      />
+                      {listing.badge && (
+                        <span
+                          className={`absolute top-sm left-sm text-[10px] tracking-widest font-bold uppercase px-xs py-[2px] rounded-full ${
+                            listing.badge === "Featured"
+                              ? "bg-tertiary-fixed text-on-tertiary-fixed"
+                              : listing.badge === "New"
+                              ? "bg-primary text-on-primary"
+                              : "bg-secondary-container text-on-surface"
+                          }`}
+                        >
+                          {listing.badge}
+                        </span>
+                      )}
+                    </div>
+                    <div className="p-md">
+                      <div className="flex justify-between items-start mb-xs">
+                        <h3 className="text-[18px] font-bold font-manrope leading-tight">{listing.title}</h3>
+                        <span className="text-primary font-bold text-[14px] whitespace-nowrap ml-xs">
+                          {listing.price}
+                        </span>
+                      </div>
+                      <p className="text-secondary text-[12px] tracking-widest uppercase mb-md">
+                        {listing.category} · {listing.location}
+                      </p>
+                      <div className="grid grid-cols-2 gap-sm border-t border-outline-variant pt-md mb-md">
+                        <div>
+                          <span className="block text-[10px] tracking-widest uppercase text-secondary">
+                            Revenue
+                          </span>
+                          <span className="font-bold text-[14px]">{listing.revenue}</span>
+                        </div>
+                        <div>
+                          <span className="block text-[10px] tracking-widest uppercase text-secondary">
+                            EBITDA
+                          </span>
+                          <span className="font-bold text-[14px]">{listing.ebitda}</span>
+                        </div>
+                      </div>
+                      <Link
+                        href={`/listings/${listing.id}`}
+                        className="block w-full border-2 border-primary text-primary py-xs rounded-lg text-[12px] tracking-widest font-semibold uppercase text-center hover:bg-primary hover:text-on-primary transition-all"
                       >
-                        {listing.badge}
-                      </span>
-                    )}
-                  </div>
-                  <div className="p-md">
-                    <div className="flex justify-between items-start mb-xs">
-                      <h3 className="text-[18px] font-bold font-manrope leading-tight">{listing.title}</h3>
-                      <span className="text-primary font-bold text-[14px] whitespace-nowrap ml-xs">
-                        {listing.price}
-                      </span>
+                        View Details
+                      </Link>
                     </div>
-                    <p className="text-secondary text-[12px] tracking-widest uppercase mb-md">
-                      {listing.category} · {listing.location}
-                    </p>
-                    <div className="grid grid-cols-2 gap-sm border-t border-outline-variant pt-md mb-md">
-                      <div>
-                        <span className="block text-[10px] tracking-widest uppercase text-secondary">
-                          Revenue
-                        </span>
-                        <span className="font-bold text-[14px]">{listing.revenue}</span>
-                      </div>
-                      <div>
-                        <span className="block text-[10px] tracking-widest uppercase text-secondary">
-                          EBITDA
-                        </span>
-                        <span className="font-bold text-[14px]">{listing.ebitda}</span>
-                      </div>
-                    </div>
-                    <Link
-                      href={`/listings/${listing.id}`}
-                      className="block w-full border-2 border-primary text-primary py-xs rounded-lg text-[12px] tracking-widest font-semibold uppercase text-center hover:bg-primary hover:text-on-primary transition-all"
-                    >
-                      View Details
-                    </Link>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </main>

@@ -9,37 +9,37 @@ const equipmentListings = [
     id: "e1", title: "CNC Milling Machine – DMG MORI", price: "280,000 DKK", category: "Manufacturing",
     year: 2019, condition: "Excellent", location: "Odense",
     desc: "5-axis CNC milling center, low operating hours. Full service history. Includes tooling set.",
-    icon: "precision_manufacturing",
+    img: "https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=600&auto=format&fit=crop",
   },
   {
     id: "e2", title: "Mercedes Sprinter Refrigerated Van", price: "145,000 DKK", category: "Logistics",
     year: 2021, condition: "Good", location: "Copenhagen",
     desc: "Dual-zone refrigeration, 3.5t payload. Used for food distribution. Ready for immediate handover.",
-    icon: "local_shipping",
+    img: "/images/e2.jpg",
   },
   {
     id: "e3", title: "Commercial Espresso Machine – La Marzocco", price: "38,000 DKK", category: "Cafe & Food",
     year: 2022, condition: "Excellent", location: "Aarhus",
     desc: "3-group La Marzocco Linea PB. Minimal use, descaled and serviced. Perfect for cafe acquisitions.",
-    icon: "local_cafe",
+    img: "https://images.unsplash.com/photo-1516224498413-84ecf3a1e7fd?w=600&auto=format&fit=crop",
   },
   {
     id: "e4", title: "Forklift – Toyota 8FBM20", price: "95,000 DKK", category: "Logistics",
     year: 2020, condition: "Good", location: "Aalborg",
     desc: "Electric counterbalance forklift, 2000kg capacity. Battery recently replaced. Inspection passed 2024.",
-    icon: "forklift",
+    img: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=600&auto=format&fit=crop",
   },
   {
     id: "e5", title: "Server Rack – Dell PowerEdge x6", price: "62,000 DKK", category: "Tech",
     year: 2021, condition: "Excellent", location: "Copenhagen",
     desc: "6x Dell PowerEdge R740 rack servers, 48-core each, 512GB RAM per node. Full rack included.",
-    icon: "dns",
+    img: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&auto=format&fit=crop",
   },
   {
     id: "e6", title: "Dental Chair – Sirona Intego", price: "112,000 DKK", category: "Healthcare",
     year: 2020, condition: "Very Good", location: "Frederiksberg",
     desc: "Complete dental unit with integrated X-ray arm. Selling as part of practice wind-down.",
-    icon: "medical_services",
+    img: "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=600&auto=format&fit=crop",
   },
 ];
 
@@ -56,7 +56,9 @@ export default function EquipmentPage() {
 
   const filtered = equipmentListings.filter((e) => {
     const matchCat = activeCategory === "All" || e.category === activeCategory;
-    const matchSearch = e.title.toLowerCase().includes(search.toLowerCase()) || e.desc.toLowerCase().includes(search.toLowerCase());
+    const matchSearch =
+      e.title.toLowerCase().includes(search.toLowerCase()) ||
+      e.desc.toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
   });
 
@@ -77,7 +79,6 @@ export default function EquipmentPage() {
             <p className="text-body-lg font-inter text-secondary max-w-xl mx-auto">
               Buy and sell verified commercial equipment across Denmark — machinery, vehicles, tech infrastructure, and more.
             </p>
-            {/* Search */}
             <div className="max-w-lg mx-auto mt-lg bg-surface rounded-xl shadow-md flex items-center gap-xs px-md border border-outline-variant">
               <span className="material-symbols-outlined text-outline">search</span>
               <input
@@ -94,7 +95,6 @@ export default function EquipmentPage() {
         {/* Filter + Grid */}
         <section className="py-xl bg-surface-container-low">
           <div className="max-w-container-max mx-auto px-gutter">
-            {/* Category filters */}
             <div className="flex gap-sm flex-wrap mb-lg">
               {categories.map((cat) => (
                 <button
@@ -116,8 +116,12 @@ export default function EquipmentPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
               {filtered.map((item) => (
                 <div key={item.id} className="bg-surface rounded-xl border border-outline-variant overflow-hidden hover:shadow-md transition-all group">
-                  <div className="h-36 bg-secondary-container flex items-center justify-center">
-                    <span className="material-symbols-outlined text-primary text-[64px]" style={{ fontVariationSettings: "'FILL' 0" }}>{item.icon}</span>
+                  <div className="h-48 overflow-hidden">
+                    <img
+                      src={item.img}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
                   </div>
                   <div className="p-md">
                     <div className="flex justify-between items-start mb-xs">
@@ -126,10 +130,15 @@ export default function EquipmentPage() {
                     </div>
                     <p className="text-body-sm font-inter text-secondary mb-md">{item.desc}</p>
                     <div className="flex flex-wrap gap-xs mb-md">
-                      <span className="bg-surface-container-low border border-outline-variant text-secondary text-[11px] font-inter font-semibold px-xs py-1 rounded tracking-wide">{item.year}</span>
-                      <span className={`text-[11px] font-inter font-semibold px-xs py-1 rounded tracking-wide ${conditionColors[item.condition]}`}>{item.condition}</span>
+                      <span className="bg-surface-container-low border border-outline-variant text-secondary text-[11px] font-inter font-semibold px-xs py-1 rounded tracking-wide">
+                        {item.year}
+                      </span>
+                      <span className={`text-[11px] font-inter font-semibold px-xs py-1 rounded tracking-wide ${conditionColors[item.condition]}`}>
+                        {item.condition}
+                      </span>
                       <span className="bg-surface-container-low border border-outline-variant text-secondary text-[11px] font-inter font-semibold px-xs py-1 rounded tracking-wide flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[14px]">location_on</span>{item.location}
+                        <span className="material-symbols-outlined text-[14px]">location_on</span>
+                        {item.location}
                       </span>
                     </div>
                     <Link
@@ -160,7 +169,10 @@ export default function EquipmentPage() {
             <p className="text-on-primary/70 font-inter text-body-md max-w-lg mx-auto">
               List your commercial equipment for free and reach thousands of verified buyers across Scandinavia.
             </p>
-            <Link href="/post-ad" className="inline-block bg-on-primary text-primary px-xl py-md rounded-lg font-manrope font-semibold hover:opacity-90 transition-all mt-md">
+            <Link
+              href="/post-ad"
+              className="inline-block bg-on-primary text-primary px-xl py-md rounded-lg font-manrope font-semibold hover:opacity-90 transition-all mt-md"
+            >
               Post Equipment Listing
             </Link>
           </div>

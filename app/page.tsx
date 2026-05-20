@@ -5,7 +5,6 @@ import Footer from "@/components/Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { TranslationKey } from "@/lib/i18n";
 
-// labelKey typed as string — cast to TranslationKey at call sites
 const categories: { icon: string; labelKey: string }[] = [
   { icon: "restaurant",              labelKey: "cat_fb"            },
   { icon: "precision_manufacturing", labelKey: "cat_manufacturing" },
@@ -15,16 +14,17 @@ const categories: { icon: string; labelKey: string }[] = [
   { icon: "storefront",              labelKey: "cat_retail"        },
 ];
 
+// ✅ مفاتيح ترجمة بدل نصوص ثابتة
 const featuredListings = [
   {
     id: "1",
     title: "Artisan Coffee House",
     price: "2.4M DKK",
-    description: "Prime location in Indre By. High foot traffic and established loyal customer base.",
-    badge: "Verified",
-    stat1Label: "REVENUE",
+    descKey: "listing1_desc",
+    badgeKey: "badge_verified",
+    stat1LabelKey: "stat_revenue",
     stat1Value: "1.2M / Yr",
-    stat2Label: "LOCATION",
+    stat2LabelKey: "stat_location",
     stat2Value: "Copenhagen",
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAGuclqPwT_mlh92oQeeSh4_CrvGwnZR0hx1Rql8bA_0K7LOP82bjG7ObidghjV2P1sLl3ySEgytUFkRTjgMEmLMsqXhl2aKks9quBpNjYPqYWgZ3rbwCvziDU8UfvFg4IQRcwpcQszDuXVklZOsxm2fVFwNw6onU3-aN2l9_2R9vDZIO-2BgClViEIFkx67ynl-ilfFVXH2NHL9myQ0OFVHpIMH7hp5_RgFEezRwlvwlsbnTAGI04NyvSKKwtIFnjSCAIs-7uTpXg",
   },
@@ -32,25 +32,25 @@ const featuredListings = [
     id: "2",
     title: "Inventory SaaS Platform",
     price: "4.8M DKK",
-    description: "Scaling B2B platform with 85% gross margins and recurring revenue streams.",
-    badge: "Hot",
-    stat1Label: "MRR",
+    descKey: "listing2_desc",
+    badgeKey: "badge_hot",
+    stat1LabelKey: "stat_mrr",
     stat1Value: "140K DKK",
-    stat2Label: "INDUSTRY",
+    stat2LabelKey: "stat_industry",
     stat2Value: "Technology",
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuB9igeYONrIrmtWE3ahIzKD769xMNd_oSatIiLZJNxpsBRgOA2rxVG-SXiru-lXVFGIiOPKYPORqoGSsqEF4HRSiebFs-MtM37tFTviwkLAKZLPInhguN_CsEQKRDpMThMDpg5lcTmLnp4AOhn4aQD88GxywYMg0jhfhgbV6ao1Jocub9aDgwSqzyDcIq_NGnapDxjSccE7XbsbjkJOf30N4P9_SpcQdW-Vx6L7cyoYKgLQG4mp3jzK4JGKNGRsuzjfHeRh4PPaO3s",
+    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBoS-wDejNKFaBiKSR3ZAyR1UDUTU7lCs4LZqlszPB5AzI9RPFuIt-nuIMZka8GRXesapA3Fv8m3QvcUobcIgrDResVklB6a-GmFf_a30L-OH-YsTOJrPLhmlR4xcAM2gzm6CYjxPBmYccmFhvTe1a7wqfvvCkGY8AQfhObGAFx27xyJ0LgzF4r0ROaQSRhR8HKtKPAaaMEMcN3XydWp76hgOUj77St_x7t801-oEfHsN9WEDUfjOoIY5AefBUseg6472nUo4bldpQ",
   },
   {
     id: "3",
     title: "Last-Mile Logistics",
     price: "3.2M DKK",
-    description: "Fleet of 12 electric vans with active long-term contracts in Aarhus region.",
-    badge: "Verified",
-    stat1Label: "ASSETS",
+    descKey: "listing3_desc",
+    badgeKey: "badge_verified",
+    stat1LabelKey: "stat_assets",
     stat1Value: "1.8M DKK",
-    stat2Label: "LOCATION",
+    stat2LabelKey: "stat_location",
     stat2Value: "Aarhus",
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuB4l4qC8t1QhimK0ALHvUGjOnUbT2dPxNHoKMBBUZhIlvolQldXdwSodHT4NN6fJPuURPDh3oOdgf13M4HfICPYGhinz4pTVgcvgGD47rk9yxVUY2inqtxuJ76EvKHp-J836iTltJCuIFkx67ynl-ilfFVXH2NHL9myQ0OFVHpIMH7hp5_RgFEezRwlvwlsbnTAGI04NyvSKKwtIFnjSCAIs-7uTpXg",
+    img: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=800&auto=format&fit=crop",
   },
 ];
 
@@ -152,8 +152,9 @@ export default function HomePage() {
                     alt={listing.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
+                  {/* ✅ badge متترجم */}
                   <div className="absolute top-sm right-sm bg-surface/90 backdrop-blur px-xs py-1 rounded text-label-caps font-label-caps text-primary border border-outline-variant">
-                    {listing.badge}
+                    {tr(listing.badgeKey as TranslationKey)}
                   </div>
                 </div>
                 <div className="p-md">
@@ -161,14 +162,20 @@ export default function HomePage() {
                     <h3 className="text-headline-md font-headline-md font-manrope">{listing.title}</h3>
                     <span className="text-primary font-bold whitespace-nowrap ml-xs">{listing.price}</span>
                   </div>
-                  <p className="text-on-surface-variant text-body-sm mb-md">{listing.description}</p>
+                  {/* ✅ الوصف متترجم */}
+                  <p className="text-on-surface-variant text-body-sm mb-md">{tr(listing.descKey as TranslationKey)}</p>
                   <div className="grid grid-cols-2 gap-sm border-t border-outline-variant pt-md mb-md">
                     <div>
-                      <span className="block text-label-caps font-label-caps text-on-secondary-container">{listing.stat1Label}</span>
+                      {/* ✅ labels متترجمة */}
+                      <span className="block text-label-caps font-label-caps text-on-secondary-container">
+                        {tr(listing.stat1LabelKey as TranslationKey)}
+                      </span>
                       <span className="font-bold text-body-md">{listing.stat1Value}</span>
                     </div>
                     <div>
-                      <span className="block text-label-caps font-label-caps text-on-secondary-container">{listing.stat2Label}</span>
+                      <span className="block text-label-caps font-label-caps text-on-secondary-container">
+                        {tr(listing.stat2LabelKey as TranslationKey)}
+                      </span>
                       <span className="font-bold text-body-md">{listing.stat2Value}</span>
                     </div>
                   </div>
@@ -210,7 +217,7 @@ export default function HomePage() {
       <section className="py-xl bg-primary text-on-primary">
         <div className="max-w-container-max mx-auto px-gutter text-center space-y-md">
           <h2 className="text-headline-lg font-headline-lg font-manrope">{tr("cta_title")}</h2>
-          <p className="text-on-primary/70 text-body-md max-w-lg mx-auto">{tr("cta_subtitle")}</p>
+          <p className="text-on-primary/70 text-body-md max-lg mx-auto">{tr("cta_subtitle")}</p>
           <div className="flex flex-col sm:flex-row gap-md justify-center pt-md">
             <Link
               href="/browse"

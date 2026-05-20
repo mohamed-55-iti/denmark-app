@@ -1,11 +1,200 @@
+"use client";
+import { useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export default function ListingDetailsPage() {
+  const [showNDA, setShowNDA] = useState(false);
+  const [showQuestion, setShowQuestion] = useState(false);
+  const [ndaSubmitted, setNdaSubmitted] = useState(false);
+  const [questionSubmitted, setQuestionSubmitted] = useState(false);
+
   return (
     <div className="bg-background text-on-background min-h-screen">
       <Navbar />
+
+      {/* NDA Modal */}
+      {showNDA && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-md"
+          onClick={(e) => { if (e.target === e.currentTarget) { setShowNDA(false); setNdaSubmitted(false); } }}
+        >
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-xl border border-outline-variant">
+            {ndaSubmitted ? (
+              <div className="text-center space-y-md py-md">
+                <span
+                  className="material-symbols-outlined text-primary text-[48px]"
+                  style={{ fontVariationSettings: "'FILL' 1" }}
+                >
+                  check_circle
+                </span>
+                <h3 className="text-[24px] font-bold font-manrope">Request Received!</h3>
+                <p className="text-secondary text-[14px]">
+                  We'll send the NDA to your email within 24 hours.
+                </p>
+                <button
+                  onClick={() => { setShowNDA(false); setNdaSubmitted(false); }}
+                  className="w-full bg-primary text-on-primary py-sm rounded-lg text-[12px] tracking-widest font-semibold uppercase hover:opacity-90 transition-all"
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="flex justify-between items-start mb-lg">
+                  <div>
+                    <h3 className="text-[20px] font-bold font-manrope">Sign NDA</h3>
+                    <p className="text-secondary text-[13px] mt-xs">
+                      Get access to the full financial data room
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowNDA(false)}
+                    className="text-secondary hover:text-on-surface transition-colors"
+                  >
+                    <span className="material-symbols-outlined">close</span>
+                  </button>
+                </div>
+                <div className="space-y-md">
+                  <div>
+                    <label className="block text-[11px] tracking-widest uppercase text-secondary mb-xs">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Your full name"
+                      className="w-full border border-outline-variant rounded-lg px-md py-sm text-[14px] bg-surface focus:outline-none focus:border-primary transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] tracking-widest uppercase text-secondary mb-xs">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="you@example.com"
+                      className="w-full border border-outline-variant rounded-lg px-md py-sm text-[14px] bg-surface focus:outline-none focus:border-primary transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] tracking-widest uppercase text-secondary mb-xs">
+                      Company (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Your company"
+                      className="w-full border border-outline-variant rounded-lg px-md py-sm text-[14px] bg-surface focus:outline-none focus:border-primary transition-colors"
+                    />
+                  </div>
+                  <div className="flex items-start gap-sm pt-xs">
+                    <input
+                      type="checkbox"
+                      id="nda-agree"
+                      className="mt-1 accent-primary cursor-pointer"
+                    />
+                    <label htmlFor="nda-agree" className="text-[13px] text-on-surface-variant cursor-pointer">
+                      I agree to keep all shared information confidential and not disclose it to third parties.
+                    </label>
+                  </div>
+                  <button
+                    onClick={() => setNdaSubmitted(true)}
+                    className="w-full bg-primary text-on-primary py-sm rounded-lg text-[12px] tracking-widest font-semibold uppercase hover:opacity-90 active:scale-95 transition-all shadow-md mt-md"
+                  >
+                    Submit & Sign NDA
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Ask a Question Modal */}
+      {showQuestion && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-md"
+          onClick={(e) => { if (e.target === e.currentTarget) { setShowQuestion(false); setQuestionSubmitted(false); } }}
+        >
+          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-xl border border-outline-variant">
+            {questionSubmitted ? (
+              <div className="text-center space-y-md py-md">
+                <span
+                  className="material-symbols-outlined text-primary text-[48px]"
+                  style={{ fontVariationSettings: "'FILL' 1" }}
+                >
+                  mark_email_read
+                </span>
+                <h3 className="text-[24px] font-bold font-manrope">Question Sent!</h3>
+                <p className="text-secondary text-[14px]">
+                  Erik will get back to you within 1 business day.
+                </p>
+                <button
+                  onClick={() => { setShowQuestion(false); setQuestionSubmitted(false); }}
+                  className="w-full bg-primary text-on-primary py-sm rounded-lg text-[12px] tracking-widest font-semibold uppercase hover:opacity-90 transition-all"
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="flex justify-between items-start mb-lg">
+                  <div>
+                    <h3 className="text-[20px] font-bold font-manrope">Ask a Question</h3>
+                    <p className="text-secondary text-[13px] mt-xs">
+                      Erik Sørensen will respond within 24 hours
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowQuestion(false)}
+                    className="text-secondary hover:text-on-surface transition-colors"
+                  >
+                    <span className="material-symbols-outlined">close</span>
+                  </button>
+                </div>
+                <div className="space-y-md">
+                  <div>
+                    <label className="block text-[11px] tracking-widest uppercase text-secondary mb-xs">
+                      Your Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Your full name"
+                      className="w-full border border-outline-variant rounded-lg px-md py-sm text-[14px] bg-surface focus:outline-none focus:border-primary transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] tracking-widest uppercase text-secondary mb-xs">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="you@example.com"
+                      className="w-full border border-outline-variant rounded-lg px-md py-sm text-[14px] bg-surface focus:outline-none focus:border-primary transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] tracking-widest uppercase text-secondary mb-xs">
+                      Your Question
+                    </label>
+                    <textarea
+                      rows={4}
+                      placeholder="What would you like to know about this business?"
+                      className="w-full border border-outline-variant rounded-lg px-md py-sm text-[14px] bg-surface focus:outline-none focus:border-primary transition-colors resize-none"
+                    />
+                  </div>
+                  <button
+                    onClick={() => setQuestionSubmitted(true)}
+                    className="w-full bg-primary text-on-primary py-sm rounded-lg text-[12px] tracking-widest font-semibold uppercase hover:opacity-90 active:scale-95 transition-all shadow-md"
+                  >
+                    Send Question
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       <main className="max-w-[1280px] mx-auto px-gutter py-xl">
         {/* Breadcrumb */}
@@ -174,10 +363,16 @@ export default function ListingDetailsPage() {
                 </p>
 
                 <div className="space-y-md">
-                  <button className="w-full bg-primary text-on-primary py-sm rounded-lg text-[12px] tracking-widest font-semibold uppercase hover:opacity-90 active:scale-95 transition-all shadow-md">
+                  <button
+                    onClick={() => setShowNDA(true)}
+                    className="w-full bg-primary text-on-primary py-sm rounded-lg text-[12px] tracking-widest font-semibold uppercase hover:opacity-90 active:scale-95 transition-all shadow-md"
+                  >
                     Sign NDA & Get Access
                   </button>
-                  <button className="w-full border-2 border-primary text-primary py-sm rounded-lg text-[12px] tracking-widest font-semibold uppercase hover:bg-primary hover:text-on-primary transition-all">
+                  <button
+                    onClick={() => setShowQuestion(true)}
+                    className="w-full border-2 border-primary text-primary py-sm rounded-lg text-[12px] tracking-widest font-semibold uppercase hover:bg-primary hover:text-on-primary transition-all"
+                  >
                     Ask a Question
                   </button>
                 </div>
